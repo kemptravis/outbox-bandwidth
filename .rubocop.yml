@@ -1,0 +1,20 @@
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+  DisplayCopNames: true
+  DisplayStyleGuide: true
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*'
+
+Naming/FileName:
+  Exclude:
+    - 'lib/outbox-bandwidth.rb'
+
+Layout/LineLength:
+  IgnoreCopDirectives: true
+  Max: 100
