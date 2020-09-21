@@ -32,7 +32,7 @@ describe Outbox::Bandwidth::Client do
       @client = Outbox::Bandwidth::Client.new(
         token: 'AC1',
         secret: 'abcdef',
-        account_sid: 'account_1'
+        account_id: 'account_1'
       )
       @sms = Outbox::Messages::SMS.new do
         to '+14155551212'
@@ -56,14 +56,14 @@ describe Outbox::Bandwidth::Client do
 
     context 'with a subaccount' do
       it 'delivers the SMS from the subaccount' do
-        @sms[:account_sid] = 'subaccount_sid_1'
+        @sms[:account_id] = 'subaccount_id_1'
         expect(@body).to receive(:application_id=)
         expect(@body).to receive(:to=)
         expect(@body).to receive(:from=)
         expect(@body).to receive(:text=)
         expect(@api_client).to receive_message_chain(:messaging_client, :client) { @messaging_client }
         expect(@messaging_client).to receive(:create_message).with(
-          'subaccount_sid_1',
+          'subaccount_id_1',
           body: @body
         )
         @client.deliver(@sms)
