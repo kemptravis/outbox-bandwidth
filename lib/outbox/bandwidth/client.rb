@@ -44,13 +44,13 @@ module Outbox
       protected
 
       def account_id(sms)
-        return sms[:account_sid] unless sms[:account_sid].nil?
+        return sms[:account_id] unless sms[:account_id].nil?
         @account_id
       end
 
       def create_message_body(sms)
         body = ::Bandwidth::MessageRequest.new
-        body.application_id = @application_id
+        body.application_id = sms[:application_id] || @application_id
         body.to = sms.to.is_a?(Array) ? sms.to : [sms.to]
         body.from = sms.from
         body.text = sms.body
