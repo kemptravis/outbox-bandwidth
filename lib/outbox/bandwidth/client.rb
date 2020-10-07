@@ -32,16 +32,12 @@ module Outbox
           messaging_basic_auth_password: options[:secret]
         )
         @account_id = options[:subaccount_id] || options[:account_id]
+        @application_id = options[:application_id]
       end
 
       def deliver(sms)
         messaging_client = @api_client.messaging_client.client
-        body = ::Bandwidth::MessageRequest.new
-        body.application_id = sms[:application_id]
-        body.to = sms.to
-        body.from = sms.from
-        body.text = sms.body
-        body.media = [sms[:media_url]] unless sms[:media_url].nil?
+        body = create_message_body(sms)
         messaging_client.create_message(account_id(sms), body: body)
       end
 
@@ -50,6 +46,16 @@ module Outbox
       def account_id(sms)
         return sms[:account_id] unless sms[:account_id].nil?
         @account_id
+      end
+
+      def create_message_body(sms)
+        body = ::Bandwidth::MessageRequest.new
+        body.application_id = sms[:application_id] || @application_id
+        body.to = sms.to.is_a?(Array) ? sms.to : [sms.to]
+        body.from = sms.from
+        body.text = sms.body
+        body.media = [sms[:media_url]] unless sms[:media_url].nil?
+        body
       end
     end
   end
