@@ -38,7 +38,7 @@ module Outbox
         messaging_client = @api_client.messaging_client.client
         body = ::Bandwidth::MessageRequest.new
         body.application_id = sms[:application_id]
-        body.to = sms.to
+        body.to = [sms.to]
         body.from = sms.from
         body.text = sms.body
         body.media = [sms[:media_url]] unless sms[:media_url].nil?
