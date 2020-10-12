@@ -48,15 +48,18 @@ module Outbox
         @account_id
       end
 
+      # rubocop:disable Metrics/AbcSize
       def create_message_body(sms)
         body = ::Bandwidth::MessageRequest.new
         body.application_id = sms[:application_id] || @application_id
         body.to = sms.to.is_a?(Array) ? sms.to : [sms.to]
         body.from = sms.from
         body.text = sms.body
+        body.tag = sms[:tag] unless sms[:tag].nil?
         body.media = [sms[:media_url]] unless sms[:media_url].nil?
         body
       end
+      # rubocop:enable Metrics/AbcSize
     end
   end
 end
