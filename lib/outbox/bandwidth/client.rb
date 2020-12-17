@@ -7,12 +7,8 @@ module Outbox
     # Uses Bandwidth's official Ruby API client (bandwidth) to deliver
     # SMS messages.
     #
-    #   Outbox::Messages::SMS.default_client(
-    #     :bandwidth,
-    #     account_sid: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    #     token: 'yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy',
-    #     secret: 'zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz'
-    #   )
+    # https://dev.bandwidth.com/sdks/ruby.html
+    #
     #   sms = Outbox::Messages::SMS.new(
     #     to: '+15552224444',
     #     from: '+15551115555',
@@ -25,14 +21,22 @@ module Outbox
 
       def initialize(settings = nil)
         super
-
         options = @settings.dup
-        @api_client = ::Bandwidth::Client.new(
-          messaging_basic_auth_user_name: options[:token],
-          messaging_basic_auth_password: options[:secret]
+        bandwidth_client_settings = options.slice(
+          :messaging_basic_auth_user_name, 
+          :messaging_basic_auth_password, 
+          :voice_basic_auth_user_name, 
+          :voice_basic_auth_password,
+          :two_factor_auth_basic_auth_user_name,
+          :two_factor_auth_basic_auth_password,
+          :environment,
+          :base_url
         )
-        @account_id = options[:subaccount_id] || options[:account_id]
+        @account_id = options[:account_id]
         @application_id = options[:application_id]
+        @api_client = ::Bandwidth::Client.new(
+          bandwidth_client_settings
+        )
       end
 
       def deliver(sms)

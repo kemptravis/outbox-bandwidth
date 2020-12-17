@@ -5,17 +5,37 @@ require 'ostruct'
 
 describe Outbox::Bandwidth::Client do
   describe '.new' do
-    it 'configures the Bandwidth API client' do
-      api_client = double(:api_client)
-      expect(::Bandwidth::Client).to receive(:new).with(
-        messaging_basic_auth_user_name: 'AC1',
-        messaging_basic_auth_password: 'abcdef'
-      ).and_return(api_client)
-      client = Outbox::Bandwidth::Client.new(
-        token: 'AC1',
-        secret: 'abcdef'
-      )
-      expect(client.api_client).to be(api_client)
+    context 'with a messaging_basic_auth' do
+      it 'configures the Bandwidth API client' do
+        api_client = double(:api_client)
+        expect(::Bandwidth::Client).to receive(:new).with(
+          messaging_basic_auth_user_name: 'AC1',
+          messaging_basic_auth_password: 'abcdef'
+        ).and_return(api_client)
+        client = Outbox::Bandwidth::Client.new(
+          messaging_basic_auth_user_name: 'AC1',
+          messaging_basic_auth_password: 'abcdef'
+        )
+        expect(client.api_client).to be(api_client)
+      end
+    end
+    context 'with a custom environment and base url' do
+      it 'configures the Bandwidth API client' do
+        api_client = double(:api_client)
+        expect(::Bandwidth::Client).to receive(:new).with(
+          messaging_basic_auth_user_name: 'AC1',
+          messaging_basic_auth_password: 'abcdef',
+          environment: 'custom_env',
+          base_url: 'custom.test.com'
+        ).and_return(api_client)
+        client = Outbox::Bandwidth::Client.new(
+          messaging_basic_auth_user_name: 'AC1',
+          messaging_basic_auth_password: 'abcdef',
+          environment: 'custom_env',
+          base_url: 'custom.test.com'
+        )
+        expect(client.api_client).to be(api_client)
+      end
     end
   end
 
@@ -30,8 +50,8 @@ describe Outbox::Bandwidth::Client do
         messaging_basic_auth_password: 'abcdef'
       ).and_return(@api_client)
       @client = Outbox::Bandwidth::Client.new(
-        token: 'AC1',
-        secret: 'abcdef',
+        messaging_basic_auth_user_name: 'AC1',
+        messaging_basic_auth_password: 'abcdef',
         account_id: 'account_1'
       )
       @sms = Outbox::Messages::SMS.new do
