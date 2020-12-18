@@ -32,7 +32,7 @@ module Outbox
           :environment,
           :base_url
         )
-        @account_id = options[:account_id]
+        @account_id = options[:subaccount_id] || options[:account_id]
         @application_id = options[:application_id]
         @api_client = ::Bandwidth::Client.new(
           bandwidth_client_settings
